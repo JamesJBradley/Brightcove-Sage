@@ -10,7 +10,9 @@ videojs.registerPlugin('listenForParent', function () {
             event.source.postMessage(message, event.origin);
         } else if ("playerCurrentTime") {
             var currentTime = myPlayer.currentTime();
-            console.log("test update");
+            var message = "test update";
+            console.log("Brightcove:  sending message to sage.com:  " + message + " Data: " + currentTime);
+            event.source.postMessage(message, event.origin);
         } else if (event.data === "playVideo") {
             myPlayer.play();
         } else if (event.data === 'pauseVideo') {
