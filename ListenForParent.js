@@ -19,8 +19,6 @@ videojs.registerPlugin('listenForParent', function () {
             myPlayer.pause();
         }
     };
-
-    console.log("Test Update");
     // Listen for the message, then call controlVideo() method when received
     window.addEventListener("message", controlVideo);
 });
