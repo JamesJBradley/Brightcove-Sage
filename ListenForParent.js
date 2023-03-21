@@ -10,6 +10,7 @@ videojs.registerPlugin('listenForParent', function () {
             event.source.postMessage(message, event.origin);
         } else if ("playerCurrentTime") {
             var currentTime = myPlayer.currentTime();
+            console.log("Current Time:  " + currentTime);
             var message = "Video CurrentTime";
             console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + currentTime);
             event.source.postMessage(message, event.origin);
