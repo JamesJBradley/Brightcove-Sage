@@ -10,7 +10,7 @@ videojs.registerPlugin('listenForParent', function () {
             event.source.postMessage(message, event.origin);
         } else if ("playerStartTracking") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
-            myPlayer.on('loadstart', function handlePlaybackEvent(ev) {
+            myPlayer.on('loadstart', function (ev) {
                 var state = ev.type;
                 var player = this;
 
