@@ -10,24 +10,20 @@ videojs.registerPlugin('listenForParent', function () {
             event.source.postMessage(message, event.origin);
         } else if ("playerStartTracking") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
-
-            myPlayer.ready(function () {
-                var player = this;
-                myPlayer.on('loadstart', handlePlaybackEvent);
-                var playerEvents = [
-                    'ended',
-                    'loadeddata',
-                    'loadedmetadata',
-                    'pause',
-                    'play',
-                    'ready',
-                    'stalled',
-                    'timeupdate',
-                    'volumechange',
-                ];
-                playerEvents.forEach(function (playerEvent) {
-                    myPlayer.on(playerEvent, handlePlaybackEvent);
-                });
+            myPlayer.on('loadstart', handlePlaybackEvent);
+            var playerEvents = [
+                'ended',
+                'loadeddata',
+                'loadedmetadata',
+                'pause',
+                'play',
+                'ready',
+                'stalled',
+                'timeupdate',
+                'volumechange',
+            ];
+            playerEvents.forEach(function (playerEvent) {
+                myPlayer.on(playerEvent, handlePlaybackEvent);
             });
         } else if (event.data === "playVideo") {
             myPlayer.play();
