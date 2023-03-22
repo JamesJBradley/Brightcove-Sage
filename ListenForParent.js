@@ -8,11 +8,29 @@ videojs.registerPlugin('listenForParent', function () {
             var message = "holla back youngin!";
             console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
             event.source.postMessage(message, event.origin);
-        } else if ("playerCurrentTime") {
-            var currentTime = myPlayer.currentTime();
-            var message = "test update";
-            console.log("Brightcove:  sending message to sage.com:  " + message + " Data: " + currentTime);
-            event.source.postMessage(message, event.origin);
+        } else if ("playerStartTracking") {
+            try {
+                myPlayer.ready(function () {
+                    var player = this;
+                    player.on('loadstart', handlePlaybackEvent_);
+                    var playerEvents = [
+                        'ended',
+                        'loadeddata',
+                        'loadedmetadata',
+                        'pause',
+                        'play',
+                        'ready',
+                        'stalled',
+                        'timeupdate',
+                        'volumechange',
+                    ];
+                    playerEvents.forEach(function (playerEvent) {
+                        player.on(playerEvent, handlePlaybackEvent_);
+                    });
+                });
+            } catch (e) {
+                console.warn(e);
+            }
         } else if (event.data === "playVideo") {
             myPlayer.play();
         } else if (event.data === 'pauseVideo') {
