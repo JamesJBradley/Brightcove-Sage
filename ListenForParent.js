@@ -51,9 +51,7 @@ videojs.registerPlugin('listenForParent', function () {
             videoUrl: player.currentSrc(),
             volume: parseInt(player.volume() * 100),
         };
-
-        var targetWindow = window.frameElement ? window.frameElement : window.parent;
-        targetWindow.postMessage(JSON.stringify(message), event.origin);
+        event.source.postMessage(JSON.stringify(message), event.origin);
     };
 
     // Listen for the message, then call controlVideo() method when received
