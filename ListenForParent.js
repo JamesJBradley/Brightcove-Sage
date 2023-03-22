@@ -8,7 +8,7 @@ videojs.registerPlugin('listenForParent', function () {
             var message = "holla back youngin!";
             console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
             event.source.postMessage(message, event.origin);
-        } else if ("trackingPause") {
+        } else if (event.data === "trackingPause") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
             myPlayer.on('pause', function (ev) {
                 var message = "pause tracked !!!";
