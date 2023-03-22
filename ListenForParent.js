@@ -42,6 +42,13 @@ videojs.registerPlugin('listenForParent', function () {
             playerEvents.forEach(function (playerEvent) {
                 myPlayer.on(playerEvent, handlePlaybackEvent);
             });
+        } else if ("trackingPause") {
+            console.log('Brightcove: message received from sage.com:  ' + event.data, event);
+            myPlayer.on('pause', function (ev) {
+                var message = "pause tracked !!!";
+                console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
+                event.source.postMessage(message, event.origin);
+            });
         } else if (event.data === "playVideo") {
             myPlayer.play();
         } else if (event.data === 'pauseVideo') {
