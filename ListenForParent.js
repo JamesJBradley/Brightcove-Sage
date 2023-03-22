@@ -19,6 +19,30 @@ videojs.registerPlugin('listenForParent', function () {
             myPlayer.pause();
         }
     };
+    
+    function handlePlaybackEvent_(event) {
+      var state = event.type;
+      var player = this;
+
+      var message = {
+        state: state,
+        currentTime: player.currentTime(),
+        duration: player.duration(),
+        muted: player.muted(),
+        playbackRate: player.playbackRate(),
+        videoBufferedPercent: player.bufferedPercent(),
+        videoId: player.mediainfo.id,
+        videoName: player.mediainfo.name,
+        videoTitle: player.mediainfo.name,
+        videoUrl: player.currentSrc(),
+        volume: parseInt(player.volume() * 100),
+      };
+
+      var targetOrigin = '*';
+      var targetWindow = window.frameElement ? window.frameElement : window.parent;
+      targetWindow.postMessage(JSON.stringify(message), targetOrigin);
+    };
+
     // Listen for the message, then call controlVideo() method when received
     window.addEventListener("message", controlVideo);
 });
