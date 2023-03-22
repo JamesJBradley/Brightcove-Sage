@@ -10,6 +10,8 @@ videojs.registerPlugin('listenForParent', function () {
             event.source.postMessage(message, event.origin);
         } else if (event.data === "trackingPause") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
+            var lengthOfVideo = myPlayer.duration();
+            console.log('Brightcove:  sending message to sage.com: myPlayer.duration() ==   ' + lengthOfVideo);
             //myPlayer.on('pause', function (ev) {
               //  var message = "pause tracked !!!";
                 //alert(message);
@@ -18,12 +20,6 @@ videojs.registerPlugin('listenForParent', function () {
             //});
         } else if (event.data === "playVideo") {
             myPlayer.play();
-            myPlayer.on('pause', function {
-                var message = "pause tracked !!!";
-                alert(message);
-                console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
-                event.source.postMessage(message, event.origin);
-            });
         } else if (event.data === 'pauseVideo') {
             myPlayer.pause();
         }
