@@ -23,9 +23,9 @@ videojs.registerPlugin('listenForParent', function () {
                     videoName: this.mediainfo.name,
                     videoTitle: this.mediainfo.name,
                     videoUrl: this.currentSrc(),
-                    volume: parseInt(this.volume() * 100),
+                    volume: parseInt(this.volume() * 100)
                 };
-                console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + message);
+                console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
                 ev.source.postMessage(JSON.stringify(message), ev.origin);
             });
             var playerEvents = [
@@ -37,7 +37,7 @@ videojs.registerPlugin('listenForParent', function () {
                 'ready',
                 'stalled',
                 'timeupdate',
-                'volumechange',
+                'volumechange'
             ];
             playerEvents.forEach(function (playerEvent) {
                 myPlayer.on(playerEvent, handlePlaybackEvent);
