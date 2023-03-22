@@ -11,26 +11,44 @@ videojs.registerPlugin('listenForParent', function () {
         } else if (event.data === "playerStartTracking") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
             var playerEvents = [
-                'ended',
-                'loadeddata',
-                'loadedmetadata',
-                'pause',
+                "ended",
+                "firstplay",
+                "pause",
                 'play',
-                'ready',
-                'stalled',
-                'timeupdate',
-                'volumechange'
+                "seeked",
+                "volumechange"
             ];
             playerEvents.forEach(function (playerEvent) {
                 myPlayer.on(playerEvent, function (ev) {
                     var state = ev.type;
                     var message = {
-                        state: state,
+                        state: this.state,
                         currentTime: this.currentTime(),
                         duration: this.duration(),
                         muted: this.muted(),
-                        playbackRate: this.playbackRate(),
-                        videoBufferedPercent: this.bufferedPercent(),
+                        videoId: this.mediainfo.id,
+                        videoName: this.mediainfo.name,
+                        videoTitle: this.mediainfo.name,
+                        videoUrl: this.currentSrc(),
+                        volume: parseInt(this.volume() * 100)
+                    };
+                    console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
+                    event.source.postMessage(JSON.stringify(message), event.origin);
+                });
+            });
+        } else if (event.data === "playerTimeTracking") {
+            console.log('Brightcove: message received from sage.com:  ' + event.data, event);
+            var playerEvents = [
+                "timeupdate",
+            ];
+            playerEvents.forEach(function (playerEvent) {
+                myPlayer.on(playerEvent, function (ev) {
+                    var state = ev.type;
+                    var message = {
+                        state: this.state,
+                        currentTime: this.currentTime(),
+                        duration: this.duration(),
+                        muted: this.muted(),
                         videoId: this.mediainfo.id,
                         videoName: this.mediainfo.name,
                         videoTitle: this.mediainfo.name,
