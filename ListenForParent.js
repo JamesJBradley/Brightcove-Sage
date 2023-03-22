@@ -9,6 +9,8 @@ videojs.registerPlugin('listenForParent', function () {
             console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
             event.source.postMessage(message, event.origin);
         } else if ("playerStartTracking") {
+            console.log('Brightcove: message received from sage.com:  ' + event.data, event);
+
             myPlayer.ready(function () {
                 var player = this;
                 myPlayer.on('loadstart', handlePlaybackEvent);
@@ -51,6 +53,7 @@ videojs.registerPlugin('listenForParent', function () {
             videoUrl: player.currentSrc(),
             volume: parseInt(player.volume() * 100),
         };
+        console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
         event.source.postMessage(JSON.stringify(message), event.origin);
     };
 
