@@ -22,7 +22,7 @@ videojs.registerPlugin('listenForParent', function () {
                 myPlayer.on(playerEvent, function (ev) {
                     var state = ev.type;
                     var message = {
-                        state: this.state,
+                        state: state,
                         currentTime: this.currentTime(),
                         duration: this.duration(),
                         muted: this.muted(),
@@ -45,7 +45,7 @@ videojs.registerPlugin('listenForParent', function () {
                 myPlayer.on(playerEvent, function (ev) {
                     var state = ev.type;
                     var message = {
-                        state: this.state,
+                        state: state,
                         currentTime: this.currentTime(),
                         duration: this.duration(),
                         muted: this.muted(),
