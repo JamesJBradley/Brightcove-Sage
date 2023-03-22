@@ -26,7 +26,7 @@ videojs.registerPlugin('listenForParent', function () {
                     volume: parseInt(this.volume() * 100)
                 };
                 console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
-                ev.source.postMessage(JSON.stringify(message), ev.origin);
+                event.source.postMessage(JSON.stringify(message), event.origin);
             });
             var playerEvents = [
                 'ended',
