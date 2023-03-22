@@ -16,52 +16,17 @@ videojs.registerPlugin('listenForParent', function () {
                 "pause",
                 'play',
                 "seeked",
-                "volumechange"
             ];
-            playerEvents.forEach(function (playerEvent) {
-                myPlayer.on(playerEvent, function (ev) {
-                    var state = ev.type;
-                    var message = {
-                        state: state,
-                        currentTime: this.currentTime(),
-                        duration: this.duration(),
-                        muted: this.muted(),
-                        videoId: this.mediainfo.id,
-                        videoName: this.mediainfo.name,
-                        videoTitle: this.mediainfo.name,
-                        videoUrl: this.currentSrc(),
-                        volume: parseInt(this.volume() * 100)
-                    };
-                    console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
-                    event.source.postMessage(JSON.stringify(message), event.origin);
-                });
-            });
+            setTrackingOnPlayer(playerEvents, myPlayer);
         } else if (event.data === "playerTimeTracking") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
             var playerEvents = [
                 "timeupdate",
             ];
-            playerEvents.forEach(function (playerEvent) {
-                myPlayer.on(playerEvent, function (ev) {
-                    var state = ev.type;
-                    var message = {
-                        state: state,
-                        currentTime: this.currentTime(),
-                        duration: this.duration(),
-                        muted: this.muted(),
-                        videoId: this.mediainfo.id,
-                        videoName: this.mediainfo.name,
-                        videoTitle: this.mediainfo.name,
-                        videoUrl: this.currentSrc(),
-                        volume: parseInt(this.volume() * 100)
-                    };
-                    console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
-                    event.source.postMessage(JSON.stringify(message), event.origin);
-                });
-            });
+            setTrackingOnPlayer(playerEvents, myPlayer);
         } else if (event.data === "trackingPause") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
-            myPlayer.on('pause', function (ev) {
+            myPlayer.on('pause', function () {
                 var message = "pause tracked !!!";
                 alert(message);
                 console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
@@ -73,6 +38,31 @@ videojs.registerPlugin('listenForParent', function () {
             myPlayer.pause();
         }
     };
+
+    //util
+    function handleEvent(event) {
+        var state = event.type;
+        var message = {
+            state: state,
+            currentTime: this.currentTime(),
+            duration: this.duration(),
+            muted: this.muted(),
+            videoId: this.mediainfo.id,
+            videoName: this.mediainfo.name,
+            videoTitle: this.mediainfo.name,
+            videoUrl: this.currentSrc(),
+            volume: parseInt(this.volume() * 100)
+        };
+        console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
+        event.source.postMessage(JSON.stringify(message), event.origin);
+    }
+    function setTrackingOnPlayer(playerEvents, myPlayer) {
+        if (playerEvents.length > 0) {
+            playerEvents.forEach(function (playerEvent) {
+                myPlayer.on(playerEvent, handleEvent);
+            });
+        }
+    }
 
     // Listen for the message, then call controlVideo() method when received
     window.addEventListener("message", controlVideo);
