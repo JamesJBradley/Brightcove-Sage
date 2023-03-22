@@ -9,56 +9,52 @@ videojs.registerPlugin('listenForParent', function () {
             console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
             event.source.postMessage(message, event.origin);
         } else if ("playerStartTracking") {
-            try {
-                myPlayer.ready(function () {
-                    var player = this;
-                    player.on('loadstart', handlePlaybackEvent_);
-                    var playerEvents = [
-                        'ended',
-                        'loadeddata',
-                        'loadedmetadata',
-                        'pause',
-                        'play',
-                        'ready',
-                        'stalled',
-                        'timeupdate',
-                        'volumechange',
-                    ];
-                    playerEvents.forEach(function (playerEvent) {
-                        player.on(playerEvent, handlePlaybackEvent_);
-                    });
+            myPlayer.ready(function () {
+                var player = this;
+                myPlayer.on('loadstart', handlePlaybackEvent_);
+                var playerEvents = [
+                    'ended',
+                    'loadeddata',
+                    'loadedmetadata',
+                    'pause',
+                    'play',
+                    'ready',
+                    'stalled',
+                    'timeupdate',
+                    'volumechange',
+                ];
+                playerEvents.forEach(function (playerEvent) {
+                    myPlayer.on(playerEvent, handlePlaybackEvent_);
                 });
-            } catch (e) {
-                console.warn(e);
-            }
+            });
         } else if (event.data === "playVideo") {
             myPlayer.play();
         } else if (event.data === 'pauseVideo') {
             myPlayer.pause();
         }
     };
-    
+
     function handlePlaybackEvent_(event) {
-      var state = event.type;
-      var player = this;
+        var state = event.type;
+        var player = this;
 
-      var message = {
-        state: state,
-        currentTime: player.currentTime(),
-        duration: player.duration(),
-        muted: player.muted(),
-        playbackRate: player.playbackRate(),
-        videoBufferedPercent: player.bufferedPercent(),
-        videoId: player.mediainfo.id,
-        videoName: player.mediainfo.name,
-        videoTitle: player.mediainfo.name,
-        videoUrl: player.currentSrc(),
-        volume: parseInt(player.volume() * 100),
-      };
+        var message = {
+            state: state,
+            currentTime: player.currentTime(),
+            duration: player.duration(),
+            muted: player.muted(),
+            playbackRate: player.playbackRate(),
+            videoBufferedPercent: player.bufferedPercent(),
+            videoId: player.mediainfo.id,
+            videoName: player.mediainfo.name,
+            videoTitle: player.mediainfo.name,
+            videoUrl: player.currentSrc(),
+            volume: parseInt(player.volume() * 100),
+        };
 
-      var targetOrigin = '*';
-      var targetWindow = window.frameElement ? window.frameElement : window.parent;
-      targetWindow.postMessage(JSON.stringify(message), targetOrigin);
+        var targetOrigin = '*';
+        var targetWindow = window.frameElement ? window.frameElement : window.parent;
+        targetWindow.postMessage(JSON.stringify(message), targetOrigin);
     };
 
     // Listen for the message, then call controlVideo() method when received
