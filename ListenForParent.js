@@ -11,7 +11,7 @@ videojs.registerPlugin('listenForParent', function () {
         } else if ("playerStartTracking") {
             myPlayer.ready(function () {
                 var player = this;
-                myPlayer.on('loadstart', handlePlaybackEvent_);
+                myPlayer.on('loadstart', handlePlaybackEvent);
                 var playerEvents = [
                     'ended',
                     'loadeddata',
@@ -24,7 +24,7 @@ videojs.registerPlugin('listenForParent', function () {
                     'volumechange',
                 ];
                 playerEvents.forEach(function (playerEvent) {
-                    myPlayer.on(playerEvent, handlePlaybackEvent_);
+                    myPlayer.on(playerEvent, handlePlaybackEvent);
                 });
             });
         } else if (event.data === "playVideo") {
@@ -34,7 +34,7 @@ videojs.registerPlugin('listenForParent', function () {
         }
     };
 
-    function handlePlaybackEvent_(event) {
+    function handlePlaybackEvent(event) {
         var state = event.type;
         var player = this;
 
@@ -52,9 +52,8 @@ videojs.registerPlugin('listenForParent', function () {
             volume: parseInt(player.volume() * 100),
         };
 
-        var targetOrigin = '*';
         var targetWindow = window.frameElement ? window.frameElement : window.parent;
-        targetWindow.postMessage(JSON.stringify(message), targetOrigin);
+        targetWindow.postMessage(JSON.stringify(message), event.origin);
     };
 
     // Listen for the message, then call controlVideo() method when received
