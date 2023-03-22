@@ -12,20 +12,18 @@ videojs.registerPlugin('listenForParent', function () {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
             myPlayer.on('loadstart', function (ev) {
                 var state = ev.type;
-                var player = this;
-
                 var message = {
                     state: state,
-                    currentTime: player.currentTime(),
-                    duration: player.duration(),
-                    muted: player.muted(),
-                    playbackRate: player.playbackRate(),
-                    videoBufferedPercent: player.bufferedPercent(),
-                    videoId: player.mediainfo.id,
-                    videoName: player.mediainfo.name,
-                    videoTitle: player.mediainfo.name,
-                    videoUrl: player.currentSrc(),
-                    volume: parseInt(player.volume() * 100),
+                    currentTime: this.currentTime(),
+                    duration: this.duration(),
+                    muted: this.muted(),
+                    playbackRate: this.playbackRate(),
+                    videoBufferedPercent: this.bufferedPercent(),
+                    videoId: this.mediainfo.id,
+                    videoName: this.mediainfo.name,
+                    videoTitle: this.mediainfo.name,
+                    videoUrl: this.currentSrc(),
+                    volume: parseInt(this.volume() * 100),
                 };
                 console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + message);
                 ev.source.postMessage(JSON.stringify(message), ev.origin);
