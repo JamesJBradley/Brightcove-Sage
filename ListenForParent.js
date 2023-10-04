@@ -54,6 +54,7 @@ videojs.registerPlugin('listenForParent', function () {
             volume: parseInt(this.volume() * 100)
         };
         console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
+        console.log('event.origin =  ' + event.origin);
         event.source.postMessage(JSON.stringify(message), event.origin);
     }
     function setTrackingOnPlayer(playerEvents, myPlayer) {
