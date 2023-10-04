@@ -17,13 +17,13 @@ videojs.registerPlugin('listenForParent', function () {
                 'play',
                 "seeked",
             ];
-            setTrackingOnPlayer(playerEvents, myPlayer);
+            setTrackingOnPlayer(playerEvents, myPlayer, event.origin);
         } else if (event.data === "playerTimeTracking") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
             var playerEvents = [
                 "timeupdate",
             ];
-            setTrackingOnPlayer(playerEvents, myPlayer);
+            setTrackingOnPlayer(playerEvents, myPlayer, event.origin);
         } else if (event.data === "trackingPause") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
             myPlayer.on('pause', function () {
@@ -40,7 +40,7 @@ videojs.registerPlugin('listenForParent', function () {
     };
 
     //util
-    function handleEvent(event) {
+    function handleEvent(event, eventOrigin) {
         var state = event.type;
         var message = {
             state: state,
@@ -54,14 +54,14 @@ videojs.registerPlugin('listenForParent', function () {
             volume: parseInt(this.volume() * 100)
         };
         console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
-        console.log('event.origin =  ' + event.origin);
+        console.log('event.origin =  ' + eventOrigin);
         console.log('event =  ' + JSON.stringify(event));
-        event.source.postMessage(JSON.stringify(message), event.origin);
+        event.source.postMessage(JSON.stringify(message), eventOrigin);
     }
-    function setTrackingOnPlayer(playerEvents, myPlayer) {
+    function setTrackingOnPlayer(playerEvents, myPlayer, eventOrigin) {
         if (playerEvents.length > 0) {
             playerEvents.forEach(function (playerEvent) {
-                myPlayer.on(playerEvent, handleEvent);
+                myPlayer.on(handleEvent(playerEvent, eventOrigin));
             });
         }
     }
