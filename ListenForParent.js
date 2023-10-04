@@ -17,13 +17,53 @@ videojs.registerPlugin('listenForParent', function () {
                 'play',
                 "seeked",
             ];
-            setTrackingOnPlayer(playerEvents, myPlayer, event.origin);
+            if (playerEvents.length > 0) {
+                playerEvents.forEach(function (playerEvent) {
+                    myPlayer.on(playerEvent, function () {
+                        var state = event.type;
+                        var message = {
+                            state: state,
+                            currentTime: this.currentTime(),
+                            duration: this.duration(),
+                            muted: this.muted(),
+                            videoId: this.mediainfo.id,
+                            videoName: this.mediainfo.name,
+                            videoTitle: this.mediainfo.name,
+                            videoUrl: this.currentSrc(),
+                            volume: parseInt(this.volume() * 100)
+                        };
+                        console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
+                        console.log('event.origin =  ' + event.origin);
+                        event.source.postMessage(JSON.stringify(message), event.origin);
+                    });
+                });
+            }
         } else if (event.data === "playerTimeTracking") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
             var playerEvents = [
                 "timeupdate",
             ];
-            setTrackingOnPlayer(playerEvents, myPlayer, event.origin);
+            if (playerEvents.length > 0) {
+                playerEvents.forEach(function (playerEvent) {
+                    myPlayer.on(playerEvent, function () {
+                        var state = event.type;
+                        var message = {
+                            state: state,
+                            currentTime: this.currentTime(),
+                            duration: this.duration(),
+                            muted: this.muted(),
+                            videoId: this.mediainfo.id,
+                            videoName: this.mediainfo.name,
+                            videoTitle: this.mediainfo.name,
+                            videoUrl: this.currentSrc(),
+                            volume: parseInt(this.volume() * 100)
+                        };
+                        console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
+                        console.log('event.origin =  ' + event.origin);
+                        event.source.postMessage(JSON.stringify(message), event.origin);
+                    });
+                });
+            }
         } else if (event.data === "trackingPause") {
             console.log('Brightcove: message received from sage.com:  ' + event.data, event);
             myPlayer.on('pause', function () {
@@ -38,33 +78,6 @@ videojs.registerPlugin('listenForParent', function () {
             myPlayer.pause();
         }
     };
-
-    //util
-    function handleEvent(event, eventOrigin) {
-        var state = event.type;
-        var message = {
-            state: state,
-            currentTime: this.currentTime(),
-            duration: this.duration(),
-            muted: this.muted(),
-            videoId: this.mediainfo.id,
-            videoName: this.mediainfo.name,
-            videoTitle: this.mediainfo.name,
-            videoUrl: this.currentSrc(),
-            volume: parseInt(this.volume() * 100)
-        };
-        console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
-        console.log('event.origin =  ' + eventOrigin);
-        console.log('event =  ' + JSON.stringify(event));
-        event.source.postMessage(JSON.stringify(message), eventOrigin);
-    }
-    function setTrackingOnPlayer(playerEvents, myPlayer, eventOrigin) {
-        if (playerEvents.length > 0) {
-            playerEvents.forEach(function (playerEvent) {
-                myPlayer.on(handleEvent(playerEvent, eventOrigin));
-            });
-        }
-    }
 
     // Listen for the message, then call controlVideo() method when received
     window.addEventListener("message", controlVideo);
