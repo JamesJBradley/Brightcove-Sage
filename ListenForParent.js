@@ -34,6 +34,7 @@ videojs.registerPlugin('listenForParent', function () {
                         };
                         console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
                         console.log('event.origin =  ' + event.origin);
+                        console.log('the event:  ' + JSON.stringify(event));
                         event.source.postMessage(JSON.stringify(message), event.origin);
                     });
                 });
@@ -60,6 +61,7 @@ videojs.registerPlugin('listenForParent', function () {
                         };
                         console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
                         console.log('event.origin =  ' + event.origin);
+                        console.log('the event:  ' + JSON.stringify(event));
                         event.source.postMessage(JSON.stringify(message), event.origin);
                     });
                 });
