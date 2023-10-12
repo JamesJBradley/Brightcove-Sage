@@ -7,7 +7,9 @@ videojs.registerPlugin('listenForParent', function (options) {
             // Ignore empty messages.
             return;
         }
-
+        
+        console.log('Brightcove: Event Origin:', event.origin);
+        console.log('Brightcove: Event Source:', event.source);
         console.log('Brightcove: Message received from sage.com:', data, event);
 
         switch (data) {
