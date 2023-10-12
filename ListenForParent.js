@@ -51,9 +51,15 @@ videojs.registerPlugin('listenForParent', function (options) {
     }
 
     function setTrackingOnPlayer(playerEvents, player) {
-        playerEvents.forEach(function (event) {
-            player.on(event, function () {
-                sendToParent(event + ' event tracked', player);
+        console.log('Brightcove: playerEvents:', playerEvents);
+        console.log('Brightcove: player:', player);
+    
+        playerEvents.forEach(event => {
+            console.log('Brightcove: event tracked is: ', event);
+
+            player.on(event, () => {
+                console.log('Brightcove: event triggered:', player);
+                sendToParent(`${event} event tracked`, player);
             });
         });
     }
