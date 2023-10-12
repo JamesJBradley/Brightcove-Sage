@@ -1,86 +1,62 @@
-videojs.registerPlugin('listenForParent', function () {
+videojs.registerPlugin('listenForParent', function (options) {
     var myPlayer = this;
-    // This method called when postMessage sends data into the iframe
+
     function controlVideo(event) {
-        if (event.data === "playerDetail") {
-            console.log('Brightcove: message received from sage.com:  ' + event.data, event);
-
-            var message = "holla back youngin!";
-            console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
-            event.source.postMessage(message, event.origin);
-        } else if (event.data === "playerStartTracking") {
-            console.log('Brightcove: message received from sage.com:  ' + event.data, event);
-            var playerEvents = [
-                "ended",
-                "firstplay",
-                "pause",
-                'play',
-                "seeked",
-            ];
-            if (playerEvents.length > 0) {
-                playerEvents.forEach(function (playerEvent) {
-                    myPlayer.on(playerEvent, function () {
-                        var state = event.type;
-                        var message = {
-                            state: state,
-                            currentTime: this.currentTime(),
-                            duration: this.duration(),
-                            muted: this.muted(),
-                            videoId: this.mediainfo.id,
-                            videoName: this.mediainfo.name,
-                            videoTitle: this.mediainfo.name,
-                            videoUrl: this.currentSrc(),
-                            volume: parseInt(this.volume() * 100)
-                        };
-                        console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
-                        console.log('event.origin =  ' + event.origin);
-                        console.log('the event:  ' + JSON.stringify(event));
-                        event.source.postMessage(JSON.stringify(message), event.origin);
-                    });
-                });
-            }
-        } else if (event.data === "playerTimeTracking") {
-            console.log('Brightcove: message received from sage.com:  ' + event.data, event);
-            var playerEvents = [
-                "timeupdate",
-            ];
-            if (playerEvents.length > 0) {
-                playerEvents.forEach(function (playerEvent) {
-                    myPlayer.on(playerEvent, function () {
-                        var state = event.type;
-                        var message = {
-                            state: state,
-                            currentTime: this.currentTime(),
-                            duration: this.duration(),
-                            muted: this.muted(),
-                            videoId: this.mediainfo.id,
-                            videoName: this.mediainfo.name,
-                            videoTitle: this.mediainfo.name,
-                            videoUrl: this.currentSrc(),
-                            volume: parseInt(this.volume() * 100)
-                        };
-                        console.log('Brightcove:  sending message to sage.com:  ' + " Data: " + JSON.stringify(message));
-                        console.log('event.origin =  ' + event.origin);
-                        console.log('the event:  ' + JSON.stringify(event));
-                        event.source.postMessage(JSON.stringify(message), event.origin);
-                    });
-                });
-            }
-        } else if (event.data === "trackingPause") {
-            console.log('Brightcove: message received from sage.com:  ' + event.data, event);
-            myPlayer.on('pause', function () {
-                var message = "pause tracked !!!";
-                alert(message);
-                console.log('Brightcove:  sending message to sage.com:  ' + message + " Data: " + JSON.stringify(myPlayer));
-                event.source.postMessage(message, event.origin);
-            });
-        } else if (event.data === "playVideo") {
-            myPlayer.play();
-        } else if (event.data === 'pauseVideo') {
-            myPlayer.pause();
+        var data = event.data;
+        if (!data) {
+            // Ignore empty messages.
+            return;
         }
-    };
 
-    // Listen for the message, then call controlVideo() method when received
+        console.log('Brightcove: Message received from sage.com:', data, event);
+
+        switch (data) {
+            case "playerDetail":
+                sendToParent("Connection has been made, getting player details", myPlayer);
+                break;
+            case "playerStartTracking":
+                setTrackingOnPlayer(["ended", "firstplay", "pause", "play", "seeked"], myPlayer);
+                break;
+            case "playerTimeTracking":
+                setTrackingOnPlayer(["timeupdate"], myPlayer);
+                break;
+            case "trackingPause":
+                myPlayer.on('pause', function () {
+                    sendToParent("Pause tracked!!!", myPlayer);
+                });
+                break;
+            case "playVideo":
+                myPlayer.play();
+                break;
+            case "pauseVideo":
+                myPlayer.pause();
+                break;
+        }
+    }
+
+    function sendToParent(message, player) {
+        var playerInfo = {
+            state: player.paused() ? 'paused' : 'playing',
+            currentTime: player.currentTime(),
+            duration: player.duration(),
+            muted: player.muted(),
+            videoId: player.mediainfo.id,
+            videoName: player.mediainfo.name,
+            videoTitle: player.mediainfo.name,
+            videoUrl: player.currentSrc(),
+            volume: Math.round(player.volume() * 100)
+        };
+        console.log('Brightcove: Sending message to sage.com:', message, 'Data:', playerInfo);
+        event.source.postMessage(JSON.stringify({ message, playerInfo }), event.origin);
+    }
+
+    function setTrackingOnPlayer(playerEvents, player) {
+        playerEvents.forEach(function (event) {
+            player.on(event, function () {
+                sendToParent(event + ' event tracked', player);
+            });
+        });
+    }
+
     window.addEventListener("message", controlVideo);
 });
