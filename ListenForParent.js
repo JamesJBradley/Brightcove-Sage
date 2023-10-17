@@ -7,24 +7,25 @@ videojs.registerPlugin('listenForParent', function (options) {
             // Ignore empty messages.
             return;
         }
-        
+
+        var eventOrigin = event.origin;
         console.log('Brightcove: Event Origin:', event.origin);
         console.log('Brightcove: Event Source:', event.source);
         console.log('Brightcove: Message received from sage.com:', data, event);
 
         switch (data) {
             case "playerDetail":
-                sendToParent("Connection has been made, getting player details", myPlayer);
+                sendToParent("Connection has been made, getting player details", myPlayer, eventOrigin);
                 break;
             case "playerStartTracking":
-                setTrackingOnPlayer(["ended", "firstplay", "pause", "play", "seeked"], myPlayer);
+                setTrackingOnPlayer(["ended", "firstplay", "pause", "play", "seeked"], myPlayer, eventOrigin);
                 break;
             case "playerTimeTracking":
-                setTrackingOnPlayer(["timeupdate"], myPlayer);
+                setTrackingOnPlayer(["timeupdate"], myPlayer, eventOrigin);
                 break;
             case "trackingPause":
                 myPlayer.on('pause', function () {
-                    sendToParent("Pause tracked!!!", myPlayer);
+                    sendToParent("Pause tracked!!!", myPlayer, eventOrigin);
                 });
                 break;
             case "playVideo":
@@ -36,7 +37,7 @@ videojs.registerPlugin('listenForParent', function (options) {
         }
     }
 
-    function sendToParent(message, player) {
+    function sendToParent(message, player, sendTo) {
         var playerInfo = {
             state: player.paused() ? 'paused' : 'playing',
             currentTime: player.currentTime(),
@@ -49,10 +50,13 @@ videojs.registerPlugin('listenForParent', function (options) {
             volume: Math.round(player.volume() * 100)
         };
         console.log('Brightcove: Sending message to sage.com:', { message, playerInfo });
-        window.postMessage(JSON.stringify({ message, playerInfo }), event.origin);
+        console.log("sendTo: " sendTo);
+        if(sendTo != "https://players.brightcove.net") {
+            window.postMessage(JSON.stringify({ message, playerInfo }), sendTo);
+        }
     }
 
-    function setTrackingOnPlayer(playerEvents, player) {
+    function setTrackingOnPlayer(playerEvents, player, sendTo) {
         console.log('Brightcove: playerEvents:', playerEvents);
         console.log('Brightcove: player:', player);
     
@@ -61,7 +65,7 @@ videojs.registerPlugin('listenForParent', function (options) {
 
             player.on(event, () => {
                 console.log('Brightcove: event triggered:', player);
-                sendToParent(`${event} event tracked`, player);
+                sendToParent(`${event} event tracked`, player, sendTo);
             });
         });
     }
