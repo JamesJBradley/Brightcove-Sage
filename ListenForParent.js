@@ -47,13 +47,13 @@ videojs.registerPlugin('listenForParent', function (options) {
             videoName: player.mediainfo.name,
             videoTitle: player.mediainfo.name,
             videoUrl: player.currentSrc(),
-            milestone: calculateMilestone.bind(player),
+            milestone: calculateMilestone(player),
             volume: Math.round(player.volume() * 100)
         };
         console.log('Brightcove: Sending message to sage.com:', { message, playerInfo });
         console.log("sendTo: " + sendTo);
-        if(sendTo != "https://players.brightcove.net") {
-            
+        if (sendTo != "https://players.brightcove.net") {
+
             setTimeout(window.top.postMessage(JSON.stringify({ message, playerInfo }), sendTo), 5000);
             console.log("sent message to sage.com");
         }
@@ -62,7 +62,7 @@ videojs.registerPlugin('listenForParent', function (options) {
     function setTrackingOnPlayer(playerEvents, player, sendTo) {
         console.log('Brightcove: playerEvents:', playerEvents);
         console.log('Brightcove: player:', player);
-    
+
         playerEvents.forEach(event => {
             console.log('Brightcove: event tracked is: ', event);
 
@@ -84,10 +84,8 @@ videojs.registerPlugin('listenForParent', function (options) {
     }
 
     function fireMilestoneEvent() {
-        var currentTime = _.currentTime();
-        var duration = _.duration();
         var previouslyReachedMilestone = _.milestoneTracking.milestone ? _.milestoneTracking.milestone : -1;
-        var milestone = calculateMilestone.bind(this);
+        var milestone = calculateMilestone(this);
 
         if (milestone > previouslyReachedMilestone) {
             // new milestone reached so send milestone event to sage.com
@@ -95,12 +93,12 @@ videojs.registerPlugin('listenForParent', function (options) {
             _.milestoneTracking.milestone = milestone;
             sendToParent(`milestone event tracked`, this, sendTo);
         }
-
     }
 
-    function calculateMilestone() {
+    function calculateMilestone(player) {
+        console.log("in calculate milestone")
         var milestones = [0, .1, .25, .5, .75, .9];
-        var milestone = _.findLastIndex(milestones, function (m) { return (_.currentTime() / _.duration()) >= m; });
+        var milestone = _.findLastIndex(milestones, function (m) { return (player.currentTime() / player.duration()) >= m; });
         console.log("milestone calculated is: " + milestone);
         return milestone;
     }
