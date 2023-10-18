@@ -53,6 +53,7 @@ videojs.registerPlugin('listenForParent', function (options) {
         console.log("sendTo: " + sendTo);
         if(sendTo != "https://players.brightcove.net") {
             window.onload = function() {
+                console.log("firing message as window loaded");
                 window.postMessage(JSON.stringify({ message, playerInfo }), sendTo);
             };
         }
