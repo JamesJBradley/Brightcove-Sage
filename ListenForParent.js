@@ -84,7 +84,7 @@ videojs.registerPlugin('listenForParent', function (options) {
     }
 
     function fireMilestoneEvent(player) {
-        var previouslyReachedMilestone = player.milestoneTracking.milestone ? player.milestoneTracking.milestone : -1;
+        var previouslyReachedMilestone = player.milestoneTracking.milestone != undefined ? player.milestoneTracking.milestone : -1;
         var milestone = calculateMilestone(this);
 
         if (milestone > previouslyReachedMilestone) {
