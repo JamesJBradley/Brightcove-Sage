@@ -60,15 +60,14 @@ videojs.registerPlugin('listenForParent', function (options) {
 
         playerEvents.forEach(event => {
             console.log('Brightcove: event tracked is: ', event);
-
             player.on(event, () => {
-                console.log('Brightcove: event triggered:', player);
                 if (event === "timeupdate") {
                     // then check to see if it has reached milestone
                     fireMilestoneEvent(player, sendTo);
                 }
                 else {
                     //otherwise send event
+                    console.log('Brightcove: event triggered:', player);
                     sendToParent(`${event} event tracked`, player, sendTo);
                 }
             });
