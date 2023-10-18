@@ -53,7 +53,7 @@ videojs.registerPlugin('listenForParent', function (options) {
         console.log("sendTo: " + sendTo);
         if(sendTo != "https://players.brightcove.net") {
             
-            setTimeout(window.postMessage(JSON.stringify({ message, playerInfo }), sendTo), 5000);
+            setTimeout(window.top.postMessage(JSON.stringify({ message, playerInfo }), sendTo), 5000);
             console.log("sent message to sage.com");
         }
     }
