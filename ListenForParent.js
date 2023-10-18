@@ -47,7 +47,7 @@ videojs.registerPlugin('listenForParent', function (options) {
             videoName: player.mediainfo.name,
             videoTitle: player.mediainfo.name,
             videoUrl: player.currentSrc(),
-            milestone: calculateMilestone(player, player.currentTime(), player.duration()),
+            milestone: calculateMilestone.bind(player),
             volume: Math.round(player.volume() * 100)
         };
         console.log('Brightcove: Sending message to sage.com:', { message, playerInfo });
@@ -68,7 +68,7 @@ videojs.registerPlugin('listenForParent', function (options) {
 
             player.on(event, () => {
                 console.log('Brightcove: event triggered:', player);
-                console.log("event type: " + event.type);
+                console.log("event data: " + event.data);
                 if (event.type === "play") {
                     // then start interval tracking for milestone event
                     console.log("starting milestone tracking");
@@ -87,7 +87,7 @@ videojs.registerPlugin('listenForParent', function (options) {
         var currentTime = _.currentTime();
         var duration = _.duration();
         var previouslyReachedMilestone = _.milestoneTracking.milestone ? _.milestoneTracking.milestone : -1;
-        var milestone = calculateMilestone(this,currentTime, duration);
+        var milestone = calculateMilestone.bind(this);
 
         if (milestone > previouslyReachedMilestone) {
             // new milestone reached so send milestone event to sage.com
@@ -98,9 +98,9 @@ videojs.registerPlugin('listenForParent', function (options) {
 
     }
 
-    function calculateMilestone(player, currentTime, duration) {
+    function calculateMilestone() {
         var milestones = [0, .1, .25, .5, .75, .9];
-        var milestone = player.findLastIndex(milestones, function (m) { return (currentTime / duration) >= m; });
+        var milestone = _.findLastIndex(milestones, function (m) { return (_.currentTime() / _.duration()) >= m; });
         console.log("milestone calculated is: " + milestone);
         return milestone;
     }
