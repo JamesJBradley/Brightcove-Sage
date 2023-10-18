@@ -13,7 +13,7 @@ videojs.registerPlugin('listenForParent', function (options) {
 
         switch (data) {
             case "playerDetail":
-                sendToParent("Connection has been made, getting player details", myPlayer, eventOrigin);
+                sendToParent("Connection has been made, getting player details", myPlayer, "player details", eventOrigin);
                 break;
             case "playerStartTracking":
                 setTrackingOnPlayer(["ended", "firstplay", "pause", "play", "seeked"], myPlayer, eventOrigin);
@@ -23,7 +23,7 @@ videojs.registerPlugin('listenForParent', function (options) {
                 break;
             case "trackingPause":
                 myPlayer.on('pause', function () {
-                    sendToParent("Pause tracked!!!", myPlayer, eventOrigin);
+                    sendToParent("Pause tracked!!!", myPlayer, "pause", eventOrigin);
                 });
                 break;
             case "playVideo":
@@ -35,9 +35,10 @@ videojs.registerPlugin('listenForParent', function (options) {
         }
     }
 
-    function sendToParent(message, player, sendTo) {
+    function sendToParent(message, player, eventType, sendTo) {
         var playerInfo = {
             state: player.paused() ? 'paused' : 'playing',
+            eventType: eventType,
             currentTime: player.currentTime(),
             duration: player.duration(),
             muted: player.muted(),
@@ -68,7 +69,7 @@ videojs.registerPlugin('listenForParent', function (options) {
                 else {
                     //otherwise send event
                     console.log('Brightcove: event triggered:', player);
-                    sendToParent(`${event} event tracked`, player, sendTo);
+                    sendToParent(`${event} event tracked`, player, event, sendTo);
                 }
             });
         });
@@ -82,7 +83,7 @@ videojs.registerPlugin('listenForParent', function (options) {
             // new milestone reached so send milestone event to sage.com
             console.log('Brightcove: event triggered:', player);
             player.milestoneTrackingMilestone = milestone;
-            sendToParent(`milestone event tracked`, player, sendTo);
+            sendToParent(`milestone event tracked`, player, "milestone", sendTo);
         }
         else {
             player.milestoneTrackingMilestone = previouslyReachedMilestone;
