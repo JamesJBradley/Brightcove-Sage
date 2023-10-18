@@ -72,7 +72,7 @@ videojs.registerPlugin('listenForParent', function (options) {
                 if (event === "play") {
                     // then start interval tracking for milestone event
                     console.log("starting milestone tracking");
-                    player.milestoneTrackingInterval = setInterval(fireMilestoneEvent(player), 500);
+                    player.milestoneTrackingInterval = setInterval(fireMilestoneEvent(player, sendTo), 500);
                 }
                 else if (event === "pause" || event === "ended") {
                     // then remove interval for tracking milestone as video is not playing
@@ -83,7 +83,7 @@ videojs.registerPlugin('listenForParent', function (options) {
         });
     }
 
-    function fireMilestoneEvent(player) {
+    function fireMilestoneEvent(player, sendTo) {
         var previouslyReachedMilestone = player.milestoneTrackingMilestone != undefined ? player.milestoneTrackingMilestone : -1;
         var milestone = calculateMilestone(player);
 
