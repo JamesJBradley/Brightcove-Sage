@@ -9,8 +9,6 @@ videojs.registerPlugin('listenForParent', function (options) {
         }
 
         var eventOrigin = event.origin;
-        console.log('Brightcove: Event Origin:', event.origin);
-        console.log('Brightcove: Event Source:', event.source);
         console.log('Brightcove: Message received from sage.com:', data, event);
 
         switch (data) {
@@ -50,12 +48,9 @@ videojs.registerPlugin('listenForParent', function (options) {
             milestone: calculateMilestone(player),
             volume: Math.round(player.volume() * 100)
         };
-        console.log('Brightcove: Sending message to sage.com:', { message, playerInfo });
-        console.log("sendTo: " + sendTo);
         if (sendTo != "https://players.brightcove.net") {
-
+            console.log('Brightcove: Sending message to sage.com:', { message, playerInfo });
             setTimeout(window.top.postMessage(JSON.stringify({ message, playerInfo }), sendTo), 5000);
-            console.log("sent message to sage.com");
         }
     }
 
@@ -68,15 +63,14 @@ videojs.registerPlugin('listenForParent', function (options) {
 
             player.on(event, () => {
                 console.log('Brightcove: event triggered:', player);
-                console.log("event type: " + event);
-                if (event === "play") {
+                if (event === "timeupdate") {
                     // then start interval tracking for milestone event
-                    console.log("starting milestone tracking");
-                    player.milestoneTrackingInterval = setInterval(fireMilestoneEvent(player, sendTo), 500);
+                    fireMilestoneEvent(player, sendTo)
+                    //player.milestoneTrackingInterval = setInterval(fireMilestoneEvent(player, sendTo), 500);
                 }
                 else if (event === "pause" || event === "ended") {
                     // then remove interval for tracking milestone as video is not playing
-                    clearInterval(player.milestoneTrackingInterval);
+                    //clearInterval(player.milestoneTrackingInterval);
                 }
                 sendToParent(`${event} event tracked`, player, sendTo);
             });
@@ -99,11 +93,9 @@ videojs.registerPlugin('listenForParent', function (options) {
     }
 
     function calculateMilestone(player) {
-        console.log("in calculate milestone")
         var milestones = [0, .1, .25, .5, .75, .9];
         const isMilestone = (m) => (player.currentTime() / player.duration()) >= m;
         var milestoneIndex = milestones.findLastIndex(isMilestone);
-        console.log("milestone calculated is: " + milestones[milestoneIndex]);
         return milestones[milestoneIndex];
     }
 
