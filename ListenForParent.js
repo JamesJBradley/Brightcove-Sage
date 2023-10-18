@@ -69,12 +69,12 @@ videojs.registerPlugin('listenForParent', function (options) {
             player.on(event, () => {
                 console.log('Brightcove: event triggered:', player);
                 console.log("event type: " + event);
-                if (event.type === "play") {
+                if (event === "play") {
                     // then start interval tracking for milestone event
                     console.log("starting milestone tracking");
                     player.milestoneTracking.Interval = setInterval(fireMilestoneEvent.bind(player), 500);
                 }
-                else if (event.type === "paused" || event.type === "ended") {
+                else if (event === "pause" || event === "ended") {
                     // then remove interval for tracking milestone as video is not playing
                     clearInterval(player.milestoneTracking.Interval);
                 }
