@@ -72,11 +72,11 @@ videojs.registerPlugin('listenForParent', function (options) {
                 if (event === "play") {
                     // then start interval tracking for milestone event
                     console.log("starting milestone tracking");
-                    player.milestoneTracking.Interval = setInterval(fireMilestoneEvent(player), 500);
+                    player.milestoneTrackingInterval = setInterval(fireMilestoneEvent(player), 500);
                 }
                 else if (event === "pause" || event === "ended") {
                     // then remove interval for tracking milestone as video is not playing
-                    clearInterval(player.milestoneTracking.Interval);
+                    clearInterval(player.milestoneTrackingInterval);
                 }
                 sendToParent(`${event} event tracked`, player, sendTo);
             });
@@ -84,14 +84,17 @@ videojs.registerPlugin('listenForParent', function (options) {
     }
 
     function fireMilestoneEvent(player) {
-        var previouslyReachedMilestone = player.milestoneTracking.milestone != undefined ? player.milestoneTracking.milestone : -1;
+        var previouslyReachedMilestone = player.milestoneTrackingMilestone != undefined ? player.milestoneTrackingMilestone : -1;
         var milestone = calculateMilestone(this);
 
         if (milestone > previouslyReachedMilestone) {
             // new milestone reached so send milestone event to sage.com
             console.log('Brightcove: event triggered:', player);
-            player.milestoneTracking.milestone = milestone;
+            player.milestoneTrackingMilestone = milestone;
             sendToParent(`milestone event tracked`, this, sendTo);
+        }
+        else {
+            player.milestoneTrackingMilestone = previouslyReachedMilestone;
         }
     }
 
