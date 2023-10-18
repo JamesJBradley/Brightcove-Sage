@@ -68,7 +68,7 @@ videojs.registerPlugin('listenForParent', function (options) {
 
             player.on(event, () => {
                 console.log('Brightcove: event triggered:', player);
-                console.log("event data: " + event.data);
+                console.log("event type: " + event);
                 if (event.type === "play") {
                     // then start interval tracking for milestone event
                     console.log("starting milestone tracking");
@@ -98,9 +98,10 @@ videojs.registerPlugin('listenForParent', function (options) {
     function calculateMilestone(player) {
         console.log("in calculate milestone")
         var milestones = [0, .1, .25, .5, .75, .9];
-        var milestone = _.findLastIndex(milestones, function (m) { return (player.currentTime() / player.duration()) >= m; });
-        console.log("milestone calculated is: " + milestone);
-        return milestone;
+        const isMilestone = (m) => (player.currentTime() / player.duration()) >= m;
+        var milestoneIndex = milestones.findLastIndex(isMilestone);
+        console.log("milestone calculated is: " + milestone[milestoneIndex]);
+        return milestone[milestoneIndex];
     }
 
     window.addEventListener("message", controlVideo);
