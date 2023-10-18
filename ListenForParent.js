@@ -100,8 +100,8 @@ videojs.registerPlugin('listenForParent', function (options) {
         var milestones = [0, .1, .25, .5, .75, .9];
         const isMilestone = (m) => (player.currentTime() / player.duration()) >= m;
         var milestoneIndex = milestones.findLastIndex(isMilestone);
-        console.log("milestone calculated is: " + milestone[milestoneIndex]);
-        return milestone[milestoneIndex];
+        console.log("milestone calculated is: " + milestones[milestoneIndex]);
+        return milestones[milestoneIndex];
     }
 
     window.addEventListener("message", controlVideo);
