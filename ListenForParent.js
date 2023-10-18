@@ -85,13 +85,13 @@ videojs.registerPlugin('listenForParent', function (options) {
 
     function fireMilestoneEvent(player) {
         var previouslyReachedMilestone = player.milestoneTrackingMilestone != undefined ? player.milestoneTrackingMilestone : -1;
-        var milestone = calculateMilestone(this);
+        var milestone = calculateMilestone(player);
 
         if (milestone > previouslyReachedMilestone) {
             // new milestone reached so send milestone event to sage.com
             console.log('Brightcove: event triggered:', player);
             player.milestoneTrackingMilestone = milestone;
-            sendToParent(`milestone event tracked`, this, sendTo);
+            sendToParent(`milestone event tracked`, player, sendTo);
         }
         else {
             player.milestoneTrackingMilestone = previouslyReachedMilestone;
