@@ -46,7 +46,7 @@ videojs.registerPlugin('listenForParent', function (options) {
             videoName: player.mediainfo.name,
             videoTitle: player.mediainfo.name,
             videoUrl: player.currentSrc(),
-            milestone: calculateMilestone(player),
+            milestone: eventType === "ended" ? "100" : calculateMilestone(player),
             volume: Math.round(player.volume() * 100)
         };
         if (sendTo != "https://players.brightcove.net") {
@@ -94,7 +94,7 @@ videojs.registerPlugin('listenForParent', function (options) {
         var milestones = [0, .1, .25, .5, .75, .9];
         const isMilestone = (m) => (player.currentTime() / player.duration()) >= m;
         var milestoneIndex = milestones.findLastIndex(isMilestone);
-        return milestones[milestoneIndex];
+        return (milestones[milestoneIndex])*100;
     }
 
     window.addEventListener("message", controlVideo);
