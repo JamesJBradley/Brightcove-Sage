@@ -29,9 +29,11 @@ videojs.registerPlugin('listenForParent', function (options) {
                 break;
             case "playVideo":
                 myPlayer.play();
+                sendToParent("play event tracked", myPlayer, "play", eventOrigin);
                 break;
             case "pauseVideo":
                 myPlayer.pause();
+                sendToParent("pause event tracked", myPlayer, "pause", eventOrigin);
                 break;
         }
     }
