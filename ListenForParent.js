@@ -3,6 +3,7 @@ videojs.registerPlugin('listenForParent', function (options) {
 
     function controlVideo(event) {
         var data = event.data;
+        console.log("event: " + JSON.stringify(event));
         if (!data) {
             // Ignore empty messages.
             return;
