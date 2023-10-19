@@ -47,6 +47,7 @@ videojs.registerPlugin('listenForParent', function (options) {
             videoTitle: player.mediainfo.name,
             videoUrl: player.currentSrc(),
             milestone: eventType === "ended" ? "100" : calculateMilestone(player),
+            isBrightcove: true,
             volume: Math.round(player.volume() * 100)
         };
         if (sendTo != "https://players.brightcove.net") {
